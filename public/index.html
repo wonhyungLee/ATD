@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATD - Auto Trading Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ATD Auto Trading System</h1>
+            <div class="status" id="status">
+                <span class="status-indicator"></span>
+                <span class="status-text">Checking...</span>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-button active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="tab-button" onclick="showTab('apikeys')">API Keys</button>
+            <button class="tab-button" onclick="showTab('webhook')">Webhook Info</button>
+            <button class="tab-button" onclick="showTab('manual')">Manual Order</button>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <h2>Account Summary</h2>
+            <div id="accounts-summary" class="accounts-grid">
+                <div class="loading">Loading accounts...</div>
+            </div>
+            <button class="btn btn-primary" onclick="refreshSummary()">Refresh</button>
+        </div>
+
+        <!-- API Keys Tab -->
+        <div id="apikeys" class="tab-content">
+            <h2>API Key Management</h2>
+            
+            <div class="api-form">
+                <h3>Add/Update API Key</h3>
+                <form id="apiKeyForm">
+                    <div class="form-group">
+                        <label for="account">Account Name:</label>
+                        <input type="text" id="account" name="account" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appKey">App Key:</label>
+                        <input type="text" id="appKey" name="appKey" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appSecret">App Secret:</label>
+                        <input type="password" id="appSecret" name="appSecret" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="accountNumber">Account Number:</label>
+                        <input type="text" id="accountNumber" name="accountNumber" placeholder="12345678-01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isMock" name="isMock">
+                            Use Mock Trading
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save API Key</button>
+                </form>
+            </div>
+
+            <div class="api-list">
+                <h3>Registered API Keys</h3>
+                <div id="apiKeysList" class="keys-list">
+                    <div class="loading">Loading API keys...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Webhook Info Tab -->
+        <div id="webhook" class="tab-content">
+            <h2>Webhook Configuration</h2>
+            <div class="webhook-info">
+                <h3>TradingView Webhook URL</h3>
+                <div class="webhook-url">
+                    <code id="webhookUrl">http://YOUR_SERVER_IP/order</code>
+                    <button onclick="copyWebhookUrl()" class="btn btn-small">Copy</button>
+                </div>
+                
+                <h3>Webhook Message Format</h3>
+                <pre class="code-block">{
+  "symbol": "{{ticker}}",
+  "action": "{{strategy.order.action}}",
+  "contracts": "{{strategy.order.contracts}}",
+  "price": "{{close}}",
+  "time": "{{timenow}}",
+  "exchange": "{{exchange}}",
+  "account": "default"
+}</pre>
+
+                <h3>Example Buy Order</h3>
+                <pre class="code-block">{
+  "symbol": "005930",
+  "action": "buy",
+  "contracts": "10",
+  "price": "70000",
+  "time": "2025-01-01 09:30:00",
+  "exchange": "KRX",
+  "account": "default"
+}</pre>
+
+                <h3>Test Webhook</h3>
+                <button onclick="testWebhook()" class="btn btn-primary">Send Test Webhook</button>
+            </div>
+        </div>
+
+        <!-- Manual Order Tab -->
+        <div id="manual" class="tab-content">
+            <h2>Manual Order Placement</h2>
+            <form id="manualOrderForm">
+                <div class="form-group">
+                    <label for="orderAccount">Account:</label>
+                    <select id="orderAccount" name="account" required>
+                        <option value="">Select Account</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="orderSymbol">Symbol:</label>
+                    <input type="text" id="orderSymbol" name="symbol" placeholder="005930" required>
+                </div>
+                <div class="form-group">
+                    <label for="orderAction">Action:</label>
+                    <select id="orderAction" name="action" required>
+                        <option value="buy">Buy</option>
+                        <option value="sell">Sell</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="orderQuantity">Quantity:</label>
+                    <input type="number" id="orderQuantity" name="contracts" min="1" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Place Order</button>
+            </form>
+            
+            <div id="orderResult" class="order-result"></div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2>Authentication Required</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
